@@ -20,7 +20,7 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Optional
 
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
 # ---------------------------------------------------------------------------
@@ -158,6 +158,7 @@ class UncertaintyDetail(BaseModel):
 
 class Check(BaseModel):
     """A single named verification check with its result."""
+    model_config = ConfigDict(protected_namespaces=())
     check_key: CheckKey
     verdict: Verdict
     confidence: float = Field(..., ge=0.0, le=1.0)
