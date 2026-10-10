@@ -1,11 +1,29 @@
 import React, { useState, useEffect } from 'react'
+import { 
+  Inbox, 
+  Layers, 
+  Box, 
+  RotateCcw, 
+  Scale, 
+  Zap, 
+  Search, 
+  AlertTriangle, 
+  CheckCircle2, 
+  Info, 
+  Download, 
+  RefreshCw, 
+  ShieldCheck, 
+  PlayCircle, 
+  Clock 
+} from 'lucide-react'
 import { orchestratorApi } from '../apiClient'
+import AgentBackground from './AgentBackground'
 
 const AGENT_CONFIGS = {
   receiving: {
     stage: 'receiving',
     title: 'Receiving Agent',
-    icon: '📥',
+    icon: Inbox,
     version: '1.0.0',
     owner: '@team',
     description: 'Inspects inbound freight at the dock. Compares PO lines against received quantities, flags carton and unit damages, and evaluates supplier quality.',
@@ -24,7 +42,7 @@ const AGENT_CONFIGS = {
   prep: {
     stage: 'prep',
     title: 'Prep Agent',
-    icon: '📦',
+    icon: Layers,
     version: '1.0.0',
     owner: '@team',
     description: 'Enforces Amazon FBA prep standards before shipment: polybag seals, suffocation warnings, FNSKU label placement, barcode coverage, and pricing.',
@@ -43,7 +61,7 @@ const AGENT_CONFIGS = {
   pack: {
     stage: 'pack',
     title: 'Pack Agent',
-    icon: '📦',
+    icon: Box,
     version: '2.0.0',
     owner: '@team',
     description: 'Verifies MFN and 3PL packing orders using order-blind vision and deterministic matching. Validates items present, quantities, and prevents wrong items.',
@@ -62,7 +80,7 @@ const AGENT_CONFIGS = {
   returns: {
     stage: 'returns',
     title: 'Returns Agent',
-    icon: '🔄',
+    icon: RotateCcw,
     version: '1.0.0',
     owner: '@team',
     description: 'Inspects customer returns, grades physical condition, verifies serial numbers and included accessories, and assigns final disposition.',
@@ -82,7 +100,7 @@ const AGENT_CONFIGS = {
   recovery: {
     stage: 'recovery',
     title: 'Recovery Agent',
-    icon: '💰',
+    icon: Scale,
     version: '2.0.0',
     owner: '@team',
     description: 'Audits Amazon fee reports against accumulated physical evidence. Validates fee accuracy and automatically builds claim dossiers for contradicted charges.',
@@ -229,6 +247,7 @@ export default function AgentWorkspace({ initialStage = 'receiving', onSwitchToW
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
           {Object.values(AGENT_CONFIGS).map((cfg) => {
             const isActive = cfg.stage === selectedStage
+            const CfgIcon = cfg.icon
             return (
               <button
                 key={cfg.stage}
@@ -237,19 +256,19 @@ export default function AgentWorkspace({ initialStage = 'receiving', onSwitchToW
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px',
-                  padding: '10px 18px',
+                  padding: '9px 16px',
                   borderRadius: 'var(--radius-pill)',
-                  border: isActive ? '1px solid var(--brand-500)' : '1px solid var(--edge)',
-                  background: isActive ? 'var(--accent-soft)' : 'var(--surface)',
-                  color: isActive ? '#fff' : 'var(--text-muted)',
-                  fontSize: '0.9rem',
-                  fontWeight: isActive ? 700 : 500,
+                  border: isActive ? '1px solid var(--text-primary)' : '1px solid var(--border)',
+                  background: isActive ? 'var(--text-primary)' : 'var(--surface)',
+                  color: isActive ? 'var(--surface)' : 'var(--text-secondary)',
+                  fontSize: '0.88rem',
+                  fontWeight: isActive ? 600 : 500,
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
-                  boxShadow: isActive ? 'var(--glow)' : 'none',
+                  boxShadow: isActive ? 'var(--shadow-sm)' : 'none',
                 }}
               >
-                <span>{cfg.icon}</span>
+                <CfgIcon size={16} />
                 <span>{cfg.title}</span>
               </button>
             )
@@ -260,9 +279,9 @@ export default function AgentWorkspace({ initialStage = 'receiving', onSwitchToW
           <button
             onClick={onSwitchToWorkflow}
             className="btn btn-secondary"
-            style={{ fontSize: '0.85rem', padding: '8px 16px' }}
+            style={{ fontSize: '0.84rem', padding: '8px 14px', display: 'flex', alignItems: 'center', gap: '6px' }}
           >
-            ⚡ Switch to Full Pipeline Mode
+            <Zap size={14} /> Switch to Full Pipeline Mode
           </button>
         )}
       </div>
@@ -273,59 +292,74 @@ export default function AgentWorkspace({ initialStage = 'receiving', onSwitchToW
         {/* Left Column: Config, Upstream Dependencies & Run Form */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           
-          {/* Agent Information Header Card */}
-          <div className="card" style={{ padding: '24px' }}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '14px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <span style={{ fontSize: '2.2rem' }}>{currentConfig.icon}</span>
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#fff', margin: 0 }}>
-                      {currentConfig.title}
-                    </h2>
-                    <span className="badge badge-seal" style={{ fontSize: '0.72rem' }}>
-                      ONLINE
-                    </span>
+          {/* Agent Information Header Card with Dynamic Agent Background Animation */}
+          <div className="card" style={{ padding: '24px', position: 'relative', overflow: 'hidden' }}>
+            <AgentBackground stage={selectedStage} />
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '14px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{
+                    width: '42px',
+                    height: '42px',
+                    borderRadius: '10px',
+                    background: 'var(--surface2)',
+                    border: '1px solid var(--border)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--text-primary)',
+                  }}>
+                    {React.createElement(currentConfig.icon, { size: 22 })}
                   </div>
-                  <div style={{ display: 'flex', gap: '10px', fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                    <span>Stage: <strong>{currentConfig.stage}</strong></span>
-                    <span>•</span>
-                    <span>Version: <strong>v{currentConfig.version}</strong></span>
-                    <span>•</span>
-                    <span>Mode: <strong>inproc/http</strong></span>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <h2 style={{ fontSize: '1.35rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+                        {currentConfig.title}
+                      </h2>
+                      <span className="badge badge-seal" style={{ fontSize: '0.72rem' }}>
+                        ONLINE
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '10px', fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+                      <span>Stage: <strong>{currentConfig.stage}</strong></span>
+                      <span>•</span>
+                      <span>Version: <strong>v{currentConfig.version}</strong></span>
+                      <span>•</span>
+                      <span>Mode: <strong>inproc/http</strong></span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <p style={{ fontSize: '0.92rem', color: 'var(--text)', lineHeight: 1.55, marginBottom: '16px' }}>
-              {currentConfig.description}
-            </p>
+              <p style={{ fontSize: '0.92rem', color: 'var(--text-primary)', lineHeight: 1.55, marginBottom: '16px' }}>
+                {currentConfig.description}
+              </p>
 
-            <div style={{
-              background: 'var(--surface2)',
-              border: '1px solid var(--edge)',
-              borderRadius: '8px',
-              padding: '12px 14px',
-            }}>
-              <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--brand-300)', textTransform: 'uppercase', marginBottom: '8px' }}>
-                Key Responsibilities & Contracts
+              <div style={{
+                background: 'var(--surface2)',
+                border: '1px solid var(--border)',
+                borderRadius: '8px',
+                padding: '12px 14px',
+              }}>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
+                  Key Responsibilities & Contracts
+                </div>
+                <ul style={{ margin: 0, paddingLeft: '18px', fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                  {currentConfig.responsibilities.map((r, i) => (
+                    <li key={i}>{r}</li>
+                  ))}
+                </ul>
               </div>
-              <ul style={{ margin: 0, paddingLeft: '18px', fontSize: '0.82rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
-                {currentConfig.responsibilities.map((r, i) => (
-                  <li key={i}>{r}</li>
-                ))}
-              </ul>
             </div>
           </div>
 
           {/* Upstream Dependency & Prerequisite Status */}
           <div className="card" style={{ padding: '20px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span>🔍</span> Upstream Dependency Analysis
+              <h3 style={{ fontSize: '0.98rem', fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Search size={16} /> Upstream Dependency Analysis
               </h3>
-              {loadingDeps && <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Checking...</span>}
+              {loadingDeps && <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>Checking...</span>}
             </div>
 
             {dependencies ? (
@@ -338,13 +372,19 @@ export default function AgentWorkspace({ initialStage = 'receiving', onSwitchToW
                       alignItems: 'flex-start',
                       gap: '8px',
                       fontSize: '0.84rem',
-                      color: detail.includes('Missing') || detail.includes('cannot') ? 'var(--uncertain)' : 'var(--text)',
+                      color: detail.includes('Missing') || detail.includes('cannot') ? 'var(--uncertain)' : 'var(--text-primary)',
                       background: 'var(--surface2)',
                       padding: '8px 12px',
                       borderRadius: '6px',
                     }}
                   >
-                    <span>{detail.includes('Missing') ? '⚠️' : (detail.includes('found') || detail.includes('complete') ? '✅' : 'ℹ️')}</span>
+                    {detail.includes('Missing') || detail.includes('cannot') ? (
+                      <AlertTriangle size={15} color="var(--uncertain)" style={{ flexShrink: 0, marginTop: 2 }} />
+                    ) : (detail.includes('found') || detail.includes('complete') ? (
+                      <CheckCircle2 size={15} color="var(--seal)" style={{ flexShrink: 0, marginTop: 2 }} />
+                    ) : (
+                      <Info size={15} color="var(--text-secondary)" style={{ flexShrink: 0, marginTop: 2 }} />
+                    ))}
                     <span>{detail}</span>
                   </div>
                 ))}
@@ -439,9 +479,9 @@ export default function AgentWorkspace({ initialStage = 'receiving', onSwitchToW
                       width: '100%',
                       padding: '10px 12px',
                       background: 'var(--surface2)',
-                      border: '1px solid var(--edge)',
+                      border: '1px solid var(--border)',
                       borderRadius: '8px',
-                      color: '#fff',
+                      color: 'var(--text-primary)',
                       fontSize: '0.9rem',
                     }}
                   >
@@ -459,8 +499,12 @@ export default function AgentWorkspace({ initialStage = 'receiving', onSwitchToW
                   border: '1px solid var(--stop-edge)',
                   color: 'var(--stop)',
                   fontSize: '0.85rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
                 }}>
-                  ⚠️ {errorMsg}
+                  <AlertTriangle size={15} style={{ flexShrink: 0 }} />
+                  <span>{errorMsg}</span>
                 </div>
               )}
 
@@ -474,12 +518,21 @@ export default function AgentWorkspace({ initialStage = 'receiving', onSwitchToW
                   fontWeight: 700,
                   justifyContent: 'center',
                   marginTop: '6px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
                 }}
               >
                 {executing ? (
-                  <span>⏳ Executing {currentConfig.title}...</span>
+                  <>
+                    <RefreshCw size={14} className="spin" />
+                    <span>Executing {currentConfig.title}...</span>
+                  </>
                 ) : (
-                  <span>▶ Run {currentConfig.title} Independently</span>
+                  <>
+                    <PlayCircle size={16} />
+                    <span>Run {currentConfig.title} Independently</span>
+                  </>
                 )}
               </button>
             </form>
@@ -506,7 +559,7 @@ export default function AgentWorkspace({ initialStage = 'receiving', onSwitchToW
                   }}>
                     {verdict || 'COMPLETED'}
                   </span>
-                  <span style={{ fontSize: '1.05rem', fontWeight: 700, color: '#fff' }}>
+                  <span style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                     {outcome || 'Processed'}
                   </span>
                 </div>
@@ -515,18 +568,18 @@ export default function AgentWorkspace({ initialStage = 'receiving', onSwitchToW
                   <button
                     onClick={exportEvidence}
                     className="btn btn-secondary"
-                    style={{ fontSize: '0.78rem', padding: '6px 10px' }}
+                    style={{ fontSize: '0.78rem', padding: '6px 10px', display: 'flex', alignItems: 'center', gap: '5px' }}
                     title="Export Evidence JSON"
                   >
-                    📥 JSON
+                    <Download size={13} /> JSON
                   </button>
                   <button
                     onClick={handleExecute}
                     className="btn btn-secondary"
-                    style={{ fontSize: '0.78rem', padding: '6px 10px' }}
+                    style={{ fontSize: '0.78rem', padding: '6px 10px', display: 'flex', alignItems: 'center', gap: '5px' }}
                     title="Re-run Agent"
                   >
-                    🔄 Re-Run
+                    <RefreshCw size={13} /> Re-Run
                   </button>
                 </div>
               </div>
@@ -539,31 +592,31 @@ export default function AgentWorkspace({ initialStage = 'receiving', onSwitchToW
                 background: 'var(--surface2)',
                 padding: '14px',
                 borderRadius: '8px',
-                border: '1px solid var(--edge)',
+                border: '1px solid var(--border)',
                 marginBottom: '18px',
               }}>
                 <div>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>RECORD ID</div>
-                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--brand-300)', fontFamily: 'var(--font-mono)' }}>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>RECORD ID</div>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
                     {result.record_id || 'N/A'}
                   </div>
                 </div>
                 <div>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>LATENCY</div>
-                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#fff' }}>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>LATENCY</div>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                     {result.latency_ms ? `${result.latency_ms}ms` : '<100ms'}
                   </div>
                 </div>
                 <div>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>AGENT ID</div>
-                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#fff' }}>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>AGENT ID</div>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                     {result.agent_id || `${selectedStage}-agent`}
                   </div>
                 </div>
                 <div>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>CONTENT HASH</div>
-                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--seal)' }}>
-                    ✓ SHA-256 Verified
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>CONTENT HASH</div>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--seal)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <ShieldCheck size={14} /> SHA-256 Verified
                   </div>
                 </div>
               </div>
@@ -572,7 +625,7 @@ export default function AgentWorkspace({ initialStage = 'receiving', onSwitchToW
               {selectedStage === 'recovery' && result.evidence?.payload?.charges && (
                 <div style={{ marginBottom: '18px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#fff' }}>
+                    <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                       Audited Amazon Fee Lines ({result.evidence.payload.charges.length})
                     </div>
                     {result.evidence.payload.claimable_usd > 0 && (
@@ -700,11 +753,13 @@ export default function AgentWorkspace({ initialStage = 'receiving', onSwitchToW
             </div>
           ) : (
             <div className="card" style={{ padding: '40px 24px', textAlign: 'center' }}>
-              <div style={{ fontSize: '2.5rem', marginBottom: '12px', opacity: 0.6 }}>🎯</div>
-              <h4 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '6px' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '14px', color: 'var(--text-tertiary)' }}>
+                <PlayCircle size={38} strokeWidth={1.5} />
+              </div>
+              <h4 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>
                 Ready to Execute
               </h4>
-              <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', maxWidth: '360px', margin: '0 auto 18px auto' }}>
+              <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', maxWidth: '360px', margin: '0 auto 18px auto' }}>
                 Select a sample unit or enter custom parameters on the left and click <strong>Run {currentConfig.title}</strong> to inspect isolated live evidence.
               </p>
             </div>
@@ -713,10 +768,10 @@ export default function AgentWorkspace({ initialStage = 'receiving', onSwitchToW
           {/* Past History Table for this Agent */}
           <div className="card" style={{ padding: '20px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#fff' }}>
+              <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                 Recent Runs for {currentConfig.title}
               </h3>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
                 {history.length} record(s)
               </span>
             </div>

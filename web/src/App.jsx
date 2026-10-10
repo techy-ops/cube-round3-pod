@@ -11,6 +11,29 @@ import {
 } from './apiClient'
 import AgentWorkspace from './components/AgentWorkspace'
 import AuthModal from './components/AuthModal'
+import AgentBackground from './components/AgentBackground'
+import LiveWorkflowVisualizer from './components/LiveWorkflowVisualizer'
+import {
+  Inbox,
+  Layers,
+  Box,
+  RotateCcw,
+  Scale,
+  User,
+  ArrowRight,
+  Play,
+  CheckCircle2,
+  AlertTriangle,
+  XCircle,
+  Cpu,
+  RefreshCw,
+  Terminal,
+  Download,
+  Copy,
+  ChevronRight,
+  Clock,
+  X
+} from 'lucide-react'
 
 // Safe Error Boundary to guarantee zero white-screen crashes
 class ErrorBoundary extends React.Component {
@@ -415,8 +438,8 @@ function App({ defaultMode = 'dashboard' }) {
 
             {currentUser ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ fontSize: '0.8rem', color: 'var(--brand-300)', fontWeight: 600 }}>
-                  👤 {currentUser.name || currentUser.email.split('@')[0]}
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-primary)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                  <User size={13} /> {currentUser.name || currentUser.email.split('@')[0]}
                 </span>
                 <button
                   type="button"
@@ -427,7 +450,7 @@ function App({ defaultMode = 'dashboard' }) {
                   }}
                   style={{
                     background: 'none',
-                    border: '1px solid var(--edge)',
+                    border: '1px solid var(--border)',
                     borderRadius: '6px',
                     color: 'var(--text-muted)',
                     fontSize: '0.75rem',
@@ -601,47 +624,67 @@ function App({ defaultMode = 'dashboard' }) {
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '14px' }}>
                   {[
-                    { stage: 'receiving', icon: '📥', title: 'Receiving Agent', desc: 'Dock Intake & PO Shortfall Verification', tag: 'Stage 1' },
-                    { stage: 'prep', icon: '📦', title: 'Prep Agent', desc: 'Amazon FBA Polybag & Barcode Prep', tag: 'Stage 2' },
-                    { stage: 'pack', icon: '📦', title: 'Pack Agent', desc: 'MFN Order-Blind Vision & Seal Verification', tag: 'Stage 3' },
-                    { stage: 'returns', icon: '🔄', title: 'Returns Agent', desc: 'Customer Return Grading & Restock Disposition', tag: 'Stage 4' },
-                    { stage: 'recovery', icon: '💰', title: 'Recovery Agent', desc: 'Amazon Fee Audit & Claim Dossier Builder', tag: 'Stage 5' },
-                  ].map((ag) => (
-                    <div 
-                      key={ag.stage}
-                      className="card"
-                      style={{
-                        padding: '18px',
-                        cursor: 'pointer',
-                        transition: 'transform 0.15s ease, border-color 0.15s ease',
-                        border: '1px solid var(--edge)',
-                        display: 'flex',
-                        flexDirection: 'column',
-                      }}
-                      onClick={() => {
-                        setSelectedAgentStage(ag.stage)
-                        setActiveTab('agents')
-                      }}
-                      onMouseOver={(e) => { e.currentTarget.style.borderColor = 'var(--brand-500)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-                      onMouseOut={(e) => { e.currentTarget.style.borderColor = 'var(--edge)'; e.currentTarget.style.transform = 'translateY(0)'; }}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                        <span style={{ fontSize: '1.6rem' }}>{ag.icon}</span>
-                        <span style={{ fontSize: '0.7rem', padding: '2px 7px', borderRadius: '4px', background: 'var(--surface3)', color: 'var(--brand-300)', fontWeight: 700 }}>
-                          {ag.tag}
-                        </span>
+                    { stage: 'receiving', icon: Inbox, title: 'Receiving Agent', desc: 'Dock Intake & PO Shortfall Verification', tag: 'Stage 1' },
+                    { stage: 'prep', icon: Layers, title: 'Prep Agent', desc: 'Amazon FBA Polybag & Barcode Prep', tag: 'Stage 2' },
+                    { stage: 'pack', icon: Box, title: 'Pack Agent', desc: 'MFN Order-Blind Vision & Seal Verification', tag: 'Stage 3' },
+                    { stage: 'returns', icon: RotateCcw, title: 'Returns Agent', desc: 'Customer Return Grading & Restock Disposition', tag: 'Stage 4' },
+                    { stage: 'recovery', icon: Scale, title: 'Recovery Agent', desc: 'Amazon Fee Audit & Claim Dossier Builder', tag: 'Stage 5' },
+                  ].map((ag) => {
+                    const AgIcon = ag.icon
+                    return (
+                      <div 
+                        key={ag.stage}
+                        className="card"
+                        style={{
+                          padding: '20px',
+                          cursor: 'pointer',
+                          transition: 'all 0.18s ease',
+                          border: '1px solid var(--border)',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          position: 'relative',
+                          overflow: 'hidden',
+                        }}
+                        onClick={() => {
+                          setSelectedAgentStage(ag.stage)
+                          setActiveTab('agents')
+                        }}
+                        onMouseOver={(e) => { e.currentTarget.style.borderColor = 'var(--brand-500)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                        onMouseOut={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                      >
+                        <AgentBackground stage={ag.stage} />
+                        <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', height: '100%' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                            <div style={{
+                              width: '32px',
+                              height: '32px',
+                              borderRadius: '8px',
+                              background: 'var(--surface2)',
+                              border: '1px solid var(--border)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: 'var(--text-primary)'
+                            }}>
+                              <AgIcon size={16} />
+                            </div>
+                            <span style={{ fontSize: '0.7rem', padding: '2px 7px', borderRadius: '4px', background: 'var(--surface3)', color: 'var(--text-secondary)', fontWeight: 700 }}>
+                              {ag.tag}
+                            </span>
+                          </div>
+                          <h3 style={{ fontSize: '0.98rem', fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 6px 0' }}>
+                            {ag.title}
+                          </h3>
+                          <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: '0 0 14px 0', lineHeight: 1.45, flex: 1 }}>
+                            {ag.desc}
+                          </p>
+                          <span style={{ fontSize: '0.78rem', color: 'var(--text-primary)', fontWeight: 600 }}>
+                            Run Independently →
+                          </span>
+                        </div>
                       </div>
-                      <h3 style={{ fontSize: '0.98rem', fontWeight: 700, color: '#fff', margin: '0 0 6px 0' }}>
-                        {ag.title}
-                      </h3>
-                      <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: '0 0 14px 0', lineHeight: 1.45, flex: 1 }}>
-                        {ag.desc}
-                      </p>
-                      <span style={{ fontSize: '0.78rem', color: 'var(--brand-400)', fontWeight: 600 }}>
-                        Run Independently →
-                      </span>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               </div>
 
@@ -1014,24 +1057,13 @@ function App({ defaultMode = 'dashboard' }) {
                 </div>
               )}
 
-              {/* Loading State While Executing */}
+              {/* Real-Time Live Execution Pipeline Visualizer */}
               {executing && (
-                <div className="card card-accent" style={{ textAlign: 'center', padding: '60px 24px' }}>
-                  <div className="spinner" style={{ width: 44, height: 44, borderWidth: 3, margin: '0 auto 20px auto' }}></div>
-                  <h2 style={{ justifyContent: 'center', fontSize: '1.4rem', marginBottom: 8 }}>
-                    Running Multi-Agent Orchestration
-                  </h2>
-                  <p className="hint" style={{ fontSize: '1rem', maxWidth: 500, margin: '0 auto 20px auto' }}>
-                    Executing pipeline for <strong className="mono" style={{ color: 'var(--brand-300)' }}>{unitId}</strong> under tenant <strong className="mono">{orgId}</strong>...
-                  </p>
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: 16, fontSize: '0.85rem', color: 'var(--ink-400)', flexWrap: 'wrap' }}>
-                    <span>✓ Receiving</span>
-                    <span>→ Prep</span>
-                    <span>→ Pack</span>
-                    <span>→ Returns</span>
-                    <span>→ Recovery (Breeth)</span>
-                  </div>
-                </div>
+                <LiveWorkflowVisualizer 
+                  isExecuting={true} 
+                  currentUnit={unitId} 
+                  orgId={orgId} 
+                />
               )}
 
               {/* Empty State If No Workflow Loaded Yet */}
@@ -1050,6 +1082,17 @@ function App({ defaultMode = 'dashboard' }) {
               {/* Loaded Workflow Results */}
               {!executing && workflow && (
                 <>
+                  {/* Live Workflow Visualizer Showing Verified API State */}
+                  <LiveWorkflowVisualizer 
+                    workflow={workflow} 
+                    isExecuting={false} 
+                    currentUnit={workflow.subject_id} 
+                    orgId={workflow.context?.org_id || orgId}
+                    onSelectStage={(st) => {
+                      setSelectedAgentStage(st)
+                      setActiveTab('agents')
+                    }}
+                  />
                   {/* Prominent Pack Manager Decision Banner */}
                   <div className={`decision-banner ${outcomeStr === 'CLEAN' || outcomeStr === 'PASS' ? 'decision-seal' : (outcomeStr === 'NEEDS_REVIEW' || outcomeStr === 'INCOMPLETE' ? 'decision-uncertain' : 'decision-stop')}`}>
                     <div className="db-icon">
@@ -1111,8 +1154,8 @@ function App({ defaultMode = 'dashboard' }) {
                                     </div>
                                     <div style={{display: 'flex', gap: 6, alignItems: 'center'}}>
                                       {durationText && (
-                                        <span style={{ fontSize: '0.72rem', color: 'var(--brand-300)', fontFamily: 'var(--font-mono)' }}>
-                                          ⚡ {durationText}
+                                        <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                                          <Clock size={11} /> {durationText}
                                         </span>
                                       )}
                                       <span className={`badge ${isCompleted ? 'badge-seal' : (isSkipped ? 'badge-pending' : 'badge-stop')}`}>
@@ -1292,7 +1335,9 @@ function App({ defaultMode = 'dashboard' }) {
                               </div>
                             ) : (
                               <div style={{ padding: '12px 14px', background: 'var(--surface2)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', marginBottom: 16 }}>
-                                <div style={{ fontSize: '0.85rem', color: 'var(--seal)', fontWeight: 600 }}>✓ Zero Fee Discrepancies</div>
+                                <div style={{ fontSize: '0.85rem', color: 'var(--seal)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                  <CheckCircle2 size={14} /> Zero Fee Discrepancies
+                                </div>
                                 <div style={{ fontSize: '0.8rem', color: 'var(--ink-400)', marginTop: 2 }}>
                                   All upstream carrier and warehouse billing matches the physical evidence ledger.
                                 </div>
@@ -1494,8 +1539,9 @@ function App({ defaultMode = 'dashboard' }) {
                 className="btn btn-ghost btn-sm" 
                 onClick={() => { setShowSettingsModal(false); setTestResult(null) }}
                 style={{ padding: '4px 8px' }}
+                aria-label="Close"
               >
-                ✕
+                <X size={16} />
               </button>
             </div>
 
@@ -1549,8 +1595,9 @@ function App({ defaultMode = 'dashboard' }) {
                 </button>
               </div>
               {testResult && (
-                <div style={{ marginTop: 8, fontSize: '0.8rem', color: testResult.ok ? 'var(--seal)' : 'var(--stop)' }}>
-                  {testResult.ok ? '✓ Backend reached successfully!' : `✕ Could not reach endpoint (${testResult.error}). Embedded fallback active.`}
+                <div style={{ marginTop: 8, fontSize: '0.8rem', color: testResult.ok ? 'var(--seal)' : 'var(--stop)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  {testResult.ok ? <CheckCircle2 size={14} style={{ flexShrink: 0 }} /> : <XCircle size={14} style={{ flexShrink: 0 }} />}
+                  <span>{testResult.ok ? 'Backend reached successfully.' : `Could not reach endpoint (${testResult.error}). Embedded fallback active.`}</span>
                 </div>
               )}
             </div>

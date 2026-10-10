@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { AlertCircle, Zap, X, ShieldCheck } from 'lucide-react'
 import { orchestratorApi } from '../apiClient'
 
 export default function AuthModal({ isOpen, onClose, initialMode = 'login', onAuthSuccess }) {
@@ -97,7 +98,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login', onAu
           }}
           aria-label="Close"
         >
-          ✕
+          <X size={18} />
         </button>
 
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
@@ -109,17 +110,15 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login', onAu
             height: '48px',
             borderRadius: '12px',
             background: 'var(--accent-soft)',
-            border: '1px solid var(--border-strong)',
+            border: '1px solid var(--border)',
             marginBottom: '12px',
           }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--sydon-blue)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            </svg>
+            <ShieldCheck size={24} color="var(--text-primary)" />
           </div>
-          <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: '#fff', marginBottom: '6px' }}>
+          <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>
             {mode === 'login' ? 'Sign In to Orchestrator' : 'Create Operator Account'}
           </h2>
-          <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)' }}>
+          <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
             {mode === 'login' 
               ? 'Access independent agent workspaces & audit pipeline.'
               : 'Register to manage private executions & inspection evidence.'}
@@ -139,7 +138,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login', onAu
             alignItems: 'center',
             gap: '8px',
           }}>
-            <span>⚠️</span>
+            <AlertCircle size={16} style={{ flexShrink: 0 }} />
             <span>{error}</span>
           </div>
         )}
@@ -282,10 +281,13 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login', onAu
               fontSize: '0.8rem',
               cursor: 'pointer',
               width: '100%',
-              textAlign: 'center',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
             }}
           >
-            ⚡ Auto-Fill Demo Credentials (demo@cube.build)
+            <Zap size={13} /> Auto-Fill Demo Credentials (demo@cube.build)
           </button>
 
           <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: 0 }}>

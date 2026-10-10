@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { AlertCircle, Zap, ShieldCheck } from 'lucide-react'
 import { orchestratorApi } from '../apiClient'
 import '../App.css'
 
@@ -88,7 +89,7 @@ export default function Login() {
             alignItems: 'center',
             gap: '8px',
           }}>
-            <span>⚠️</span>
+            <AlertCircle size={16} style={{ flexShrink: 0 }} />
             <span>{error}</span>
           </div>
         )}
@@ -184,10 +185,13 @@ export default function Login() {
               fontSize: '0.82rem',
               cursor: 'pointer',
               width: '100%',
-              textAlign: 'center',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
             }}
           >
-            ⚡ Auto-Fill Demo Credentials (demo@cube.build)
+            <Zap size={14} /> Auto-Fill Demo Credentials (demo@cube.build)
           </button>
 
           <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: 0 }}>

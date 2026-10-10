@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { AlertCircle } from 'lucide-react'
 import { orchestratorApi } from '../apiClient'
 import '../App.css'
 
@@ -94,7 +95,7 @@ export default function Register() {
             alignItems: 'center',
             gap: '8px',
           }}>
-            <span>⚠️</span>
+            <AlertCircle size={16} style={{ flexShrink: 0 }} />
             <span>{error}</span>
           </div>
         )}
